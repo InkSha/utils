@@ -12,7 +12,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { parsePath } from './path'
-import { asyncExec } from '../Tool/src/lib/async'
+import { _async } from '@inksha/toolsets'
+const { asyncExec } = _async
 
 /**
  * 创建文件夹
@@ -38,8 +39,8 @@ export const readFile = (filePath: string, binary = false): string => {
   return fileExist(filePath)
     ? filePath
       ? fs.readFileSync(filePath, {
-        encoding: binary ? 'binary' : 'utf8',
-      })
+          encoding: binary ? 'binary' : 'utf8',
+        })
       : ''
     : ''
 }
