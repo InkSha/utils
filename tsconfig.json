@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    // 编译后的 JS 标准
+    "target": "Es5",
+    // 生成的模块系统
+    "module": "ESNext",
+    // 是否生成声明文件以便在 JS 和 TS 项目中同时使用
+    "declaration": true,
+    // 编译目录 tsconfig.json 同级下的 lib/
+    "outDir": "./dist",
+    // 是否启用所有严格类型检查
+    "strict": true,
+    // 编译所需库
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@/": [
+        "src/"
+      ],
+      "./*": [
+        "src/*/index.ts"
+      ],
+    }
+  },
+  // 指定编译目录
+  "include": [
+    "src"
+  ],
+  // 指定排除不编译的
+  "exclude": [
+    "node_modules/",
+    "**/__test__/**"
+  ],
+}

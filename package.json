@@ -1,0 +1,101 @@
+{
+  "name": "@inksha/utils",
+  "version": "1.0.0",
+  "description": "My collection of commonly used development tools.",
+  "main": "dist/index.min.js",
+  "module": "dist/index.min.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.min.js",
+      "require": "./dist/index.min.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.ts --configPlugin typescript",
+    "build:format": "prettier --config .prettierrc.js --write ./src/** ./*js ./*ts",
+    "build:lint": "eslint src/** --fix",
+    "build:publish": "npm publish --access public",
+    "build:push": "npm run format && npm run build",
+    "commit": "cz-customizable/standalone.js",
+    "commit:log": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "dev": "nodemon --config nodemon.json src/index.ts",
+    "dev:build": "rollup -c rollup.config.ts --configPlugin typescript --watch",
+    "dev:debug": "nodemon --config nodemon.json --inspect-brk src/index.ts",
+    "dev:doc": "typedoc --options typedoc.json",
+    "dev:test": "jest --watch",
+    "dev:js": "tsc",
+    "format": "npm run build:lint && npm run build:format",
+    "start": "node --loader ts-node/esm src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/InkSha/utils.git"
+  },
+  "author": "InkSha",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    }
+  },
+  "lint-stated": {
+    "src*/**/*.ts": [
+      "prettier --config .prettierrc.js --write",
+      "eslint",
+      "git add"
+    ],
+    "src*/**/*.json": [
+      "prettier --config .prettierrc.js --write",
+      "eslint",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.2",
+    "@commitlint/config-conventional": "^18.0.0",
+    "@jest/globals": "^29.7.0",
+    "@rollup/plugin-alias": "^5.0.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.6",
+    "@types/node": "^20.8.2",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "commitlint": "^18.0.0",
+    "conventional-changelog-cli": "^4.1.0",
+    "cz-customizable": "^7.0.0",
+    "esbuild": "^0.19.5",
+    "eslint": "latest",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-config": "^29.7.0",
+    "lint-staged": "^15.0.2",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "rollup": "^4.1.4",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-esbuild": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.2",
+    "typedoc": "^0.25.2",
+    "typescript": "^5.2.2"
+  }
+}
