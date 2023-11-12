@@ -8,6 +8,7 @@ import babel from '@rollup/plugin-babel'
 import copy from 'rollup-plugin-copy'
 import terser from '@rollup/plugin-terser'
 import { defineConfig } from 'rollup'
+import pkg from './package.json' assert { type: 'json' }
 
 const plugins = [
   alias({
@@ -37,6 +38,7 @@ const plugins = [
     ],
     expandDirectories: false,
   }),
+  terser()
 ]
 const input = './src/index.ts'
 export default defineConfig({
@@ -46,8 +48,13 @@ export default defineConfig({
       dir: './dist',
       format: 'umd',
       entryFileNames: 'index.min.js',
-      name: '@inksha/toolsets',
-      plugins: [terser()],
+      name: pkg.name,
+    },
+    {
+      dir: './dist',
+      format: 'esm',
+      entryFileNames: 'index.min.mjs',
+      name: pkg.name,
     },
   ],
   plugins,

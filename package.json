@@ -1,13 +1,13 @@
 {
   "name": "@inksha/utils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "My collection of commonly used development tools.",
   "main": "dist/index.min.js",
-  "module": "dist/index.min.js",
+  "module": "dist/index.min.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.min.js",
+      "import": "./dist/index.min.mjs",
       "require": "./dist/index.min.js",
       "types": "./dist/index.d.ts"
     }
