@@ -1,11 +1,11 @@
 /**
  * @file Path module.
- * @description Some Math operations.
+ * @description Some Path operations.
  * @license MIT
  * @author InkSha<git@inksha.com>
  * @created 2023-11-11
- * @updated 2023-11-11
- * @version 1.0.0
+ * @updated 2023-11-12
+ * @version 1.0.1
  */
 
 import path from 'node:path'

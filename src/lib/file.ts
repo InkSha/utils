@@ -12,8 +12,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { parsePath } from './path'
-import { _async } from '@inksha/toolsets'
-const { asyncExec } = _async
+import { asyncExec } from '@inksha/toolsets'
 
 /**
  * 创建文件夹

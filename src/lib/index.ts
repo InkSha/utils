@@ -5,8 +5,9 @@
  * @author InkSha<git@inksha.com>
  * @created 2023-11-11
  * @updated 2023-11-11
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 export * from './file'
 export * from './path'
+export * from './os'

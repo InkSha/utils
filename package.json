@@ -1,6 +1,6 @@
 {
   "name": "@inksha/utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My collection of commonly used development tools.",
   "main": "dist/index.min.js",
   "module": "dist/index.min.js",
@@ -99,6 +99,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@inksha/toolsets": "^1.0.8"
+    "@inksha/toolsets": "^1.0.9"
   }
 }
