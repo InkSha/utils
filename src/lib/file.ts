@@ -4,14 +4,15 @@
  * @license MIT
  * @author InkSha<git@inksha.com>
  * @created 2023-11-11
- * @updated 2023-11-11
- * @version 1.0.0
+ * @updated 2023-11-25
+ * @version 1.0.2
  */
 
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { parsePath } from './path'
+import { FileObject } from './../types'
 import { asyncExec } from '@inksha/toolsets'
 
 /**
@@ -38,8 +39,8 @@ export const readFile = (filePath: string, binary = false): string => {
   return fileExist(filePath)
     ? filePath
       ? fs.readFileSync(filePath, {
-          encoding: binary ? 'binary' : 'utf8',
-        })
+        encoding: binary ? 'binary' : 'utf8',
+      })
       : ''
     : ''
 }
@@ -78,7 +79,7 @@ export const fileExist = (filePath: string): boolean => fs.existsSync(filePath)
  * @returns 文件是否存在
  */
 export const removeFiles = (filePath: string): boolean => {
-  if (fileExist(filePath)) fs.rmSync(filePath)
+  if (fileExist(filePath)) fs.rmSync(filePath, { recursive: true, force: true })
   return fileExist(filePath)
 }
 
@@ -88,6 +89,49 @@ export const removeFiles = (filePath: string): boolean => {
  * @returns 创建的文件流
  */
 export const createStream = (filepath: string) => fs.createReadStream(filepath)
+
+/**
+ * 生成文件对象
+ * @param name 文件名
+ * @param path 所在路径
+ * @param extname 扩展名
+ * @param dir 是否目录
+ * @param file 是否文件
+ * @returns 文件对象
+ */
+export const genFileObject = (name: string, path: string, extname = '', dir = false): FileObject => {
+  return { name, path, extname, dir, file: !dir }
+}
+
+/**
+ * 判断是否是文件
+ * @param path 文件路径
+ * @returns 是否是文件
+ */
+export const isFile = (path: string) => fs.lstatSync(path).isFile()
+
+/**
+ * 搜索文件
+ * @param basePath 搜索路径
+ * @param keyword 搜索关键字
+ * @param hasChild 是否包含子目录
+ * @param result 结果集
+ * @returns 结果集
+ */
+export const searchPath = (basePath = '/tmp', keyword = '', hasChild = false, result: FileObject[] = []): FileObject[] => {
+  for (const dirent of fs.readdirSync(basePath)) {
+    if (dirent.match(keyword)) {
+      const filePath = path.join(basePath, dirent)
+      const extname = dirent.split('.').slice(-1)[0]
+      const isDir = !isFile(filePath)
+      const obj = genFileObject(dirent, filePath, extname, isDir)
+      result.push(obj)
+      if (isDir) searchPath(filePath, keyword, hasChild, result)
+    }
+  }
+  return result
+}
+
 
 /**
  * 异步创建流
@@ -152,3 +196,16 @@ export const computedHash = (buffer: Buffer, hash?: string): string =>
     .createHash(hash ?? 'md5')
     .update(buffer)
     .digest('hex')
+
+/**
+ * 计算文件hash
+ * @param file 文件路径
+ * @returns 计算出的 hash
+ */
+export const computedFileHash = (file: string): string => {
+  let hash = ''
+  if (fileExist(file)) {
+    hash = computedHash(fs.readFileSync(file))
+  }
+  return hash
+}
