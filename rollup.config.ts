@@ -38,7 +38,7 @@ const plugins = [
     ],
     expandDirectories: false,
   }),
-  terser()
+  terser(),
 ]
 const input = './src/index.ts'
 export default defineConfig({

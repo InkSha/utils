@@ -39,8 +39,8 @@ export const readFile = (filePath: string, binary = false): string => {
   return fileExist(filePath)
     ? filePath
       ? fs.readFileSync(filePath, {
-        encoding: binary ? 'binary' : 'utf8',
-      })
+          encoding: binary ? 'binary' : 'utf8',
+        })
       : ''
     : ''
 }
@@ -109,11 +109,18 @@ export const genFileObject = (
 }
 
 /**
+ * 获取文件信息
+ * @param path 文件路径
+ * @returns 获取的文件信息
+ */
+export const getFileInfo = (path: string) => fs.statSync(path)
+
+/**
  * 判断是否是文件
  * @param path 文件路径
  * @returns 是否是文件
  */
-export const isFile = (path: string) => fs.lstatSync(path).isFile()
+export const isFile = (path: string) => getFileInfo(path).isFile()
 
 /**
  * 搜索文件
@@ -218,3 +225,10 @@ export const computedFileHash = (file: string): string => {
   }
   return hash
 }
+
+/**
+ * 获取文件大小
+ * @param file 文件路径
+ * @returns 文件大小
+ */
+export const getFileSize = (file: string): number => getFileInfo(file).size
