@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { generatorRandom } from '@inksha/toolsets'
-import { mkdir, readFile, writeFile, removeFiles, searchPath, isFile, computedFileHash, fileExist } from './../../src/lib/file'
+import { mkdir, readFile, writeFile, removeFiles, searchPath, isFile, computedFileHash, fileExist, getFileInfo } from './../../src/lib/file'
 
 describe('test file module', () => {
   const baseDir = './tmp_test'
@@ -56,6 +56,17 @@ describe('test file module', () => {
   test('test file exists', () => {
     const name = fileList[generatorRandom(0, fileList.length - 1)]
     expect(fileExist(name)).toBe(true)
+  })
+
+  test('test get file info success', () => {
+    const name = fileList[generatorRandom(0, fileList.length - 1)]
+    expect(getFileInfo(name)).not.toBeUndefined()
+  })
+
+  test('test get file info fail', () => {
+    const name = fileList[generatorRandom(0, fileList.length - 1)]
+    expect(removeFiles(name)).toBe(false)
+    expect(getFileInfo(name)).toBeUndefined()
   })
 
   test('test remove dir', () => {
