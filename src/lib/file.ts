@@ -99,7 +99,12 @@ export const createStream = (filepath: string) => fs.createReadStream(filepath)
  * @param file 是否文件
  * @returns 文件对象
  */
-export const genFileObject = (name: string, path: string, extname = '', dir = false): FileObject => {
+export const genFileObject = (
+  name: string,
+  path: string,
+  extname = '',
+  dir = false,
+): FileObject => {
   return { name, path, extname, dir, file: !dir }
 }
 
@@ -118,7 +123,12 @@ export const isFile = (path: string) => fs.lstatSync(path).isFile()
  * @param result 结果集
  * @returns 结果集
  */
-export const searchPath = (basePath = '/tmp', keyword = '', hasChild = false, result: FileObject[] = []): FileObject[] => {
+export const searchPath = (
+  basePath = '/tmp',
+  keyword = '',
+  hasChild = false,
+  result: FileObject[] = [],
+): FileObject[] => {
   for (const dirent of fs.readdirSync(basePath)) {
     if (dirent.match(keyword)) {
       const filePath = path.join(basePath, dirent)
@@ -131,7 +141,6 @@ export const searchPath = (basePath = '/tmp', keyword = '', hasChild = false, re
   }
   return result
 }
-
 
 /**
  * 异步创建流
