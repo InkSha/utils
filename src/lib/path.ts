@@ -15,16 +15,18 @@ import path from 'node:path'
  * @param _path 路径
  * @returns 路径数组
  */
-export function parsePath(_path: string): string[] {
+export function parsePath (_path: string): string[] {
   const result: string[] = []
   if (_path) {
     const root = getRoot(_path)
     let tmpPath = path.parse(_path)
     if (root) _path = _path.slice(1)
     result.push(tmpPath.ext ? tmpPath.dir : _path)
-    while (tmpPath.dir) {
+    while (tmpPath.dir && tmpPath.root !== tmpPath.dir) {
       if (!tmpPath.ext) {
-        result.push(`${root}${tmpPath.dir}`)
+        let items = `${tmpPath.dir}`
+        items = items.charAt(0) === root ? items : root + items
+        result.push(items)
       }
       tmpPath = path.parse(tmpPath.dir)
     }
@@ -37,7 +39,7 @@ export function parsePath(_path: string): string[] {
  * @param filepath 文件路径
  * @returns 获取的可能存在的根
  */
-export function getRoot(filepath: string) {
+export function getRoot (filepath: string) {
   const char = filepath.charAt(0)
   return isRoot(char) ? char : ''
 }
@@ -47,6 +49,6 @@ export function getRoot(filepath: string) {
  * @param char 判断的字符
  * @returns 是否属于根字符
  */
-export function isRoot(char: string) {
+export function isRoot (char: string) {
   return ['/', '\\'].includes(char)
 }

@@ -232,3 +232,17 @@ export const computedFileHash = (file: string): string => {
  * @returns 文件大小
  */
 export const getFileSize = (file: string): number => getFileInfo(file)?.size ?? 0
+
+export const getExtendName = (file: string) => file.replaceAll('\\', '/').split('/').slice(-1)[0].split('.')[1]
+
+export const renameFile = (file: string, name: string) => {
+  const _path = parsePath(file).slice(-1)[0]
+  const ext = getExtendName(file)
+  name = parsePath(name).slice(-1)[0]
+  const newFile = path.join(_path, [name, ext].join('.'))
+  if (fileExist(newFile)) {
+    return ''
+  }
+  writeFile(newFile, readFile(file))
+  return removeFiles(file)
+}

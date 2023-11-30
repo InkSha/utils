@@ -1,6 +1,6 @@
 {
   "name": "@inksha/utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "My collection of commonly used development tools.",
   "main": "dist/index.min.js",
   "module": "dist/index.min.mjs",
@@ -29,7 +29,7 @@
     "dev:debug": "nodemon --config nodemon.json --inspect-brk src/index.ts",
     "dev:doc": "typedoc --options typedoc.json",
     "dev:test": "jest --watch",
-    "dev:js": "tsc",
+    "dev:js": "nodemon src/index.mjs",
     "format": "npm run build:lint && npm run build:format",
     "start": "node --loader ts-node/esm src/index.ts"
   },

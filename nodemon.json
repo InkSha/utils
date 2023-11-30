@@ -1,7 +1,16 @@
 {
   "restartable": "rs",
-  "ignore": [".git", "node_modules/", "dist/", "coverage/"],
-  "watch": ["src/", "src/index.ts"],
+  "ignore": [
+    ".git",
+    "node_modules/",
+    "dist/",
+    "coverage/"
+  ],
+  "watch": [
+    "src/",
+    "src/index.ts",
+    "src/index.mjs"
+  ],
   "execMap": {
     "ts": "node --loader ts-node/esm"
   },
