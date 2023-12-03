@@ -1,13 +1,3 @@
-/**
- * @file File handling modules file.
- * @description Storage project all file handling tools.
- * @license MIT
- * @author InkSha<git@inksha.com>
- * @created 2023-11-11
- * @updated 2023-11-25
- * @version 1.0.2
- */
-
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -110,17 +100,17 @@ export const genFileObject = (
 
 /**
  * 获取文件信息
- * @param path 文件路径
+ * @param file 文件路径
  * @returns 获取的文件信息
  */
-export const getFileInfo = (path: string) => fileExist(path) ? fs.statSync(path) : undefined
+export const getFileInfo = (file: string) => fileExist(file) ? { ...fs.statSync(file), ...path.parse(file) } : undefined
 
 /**
  * 判断是否是文件
  * @param path 文件路径
  * @returns 是否是文件
  */
-export const isFile = (path: string) => getFileInfo(path)?.isFile() ?? false
+export const isFile = (path: string) => getFileInfo(path)?.isFile()
 
 /**
  * 搜索文件
@@ -233,16 +223,22 @@ export const computedFileHash = (file: string): string => {
  */
 export const getFileSize = (file: string): number => getFileInfo(file)?.size ?? 0
 
-export const getExtendName = (file: string) => file.replaceAll('\\', '/').split('/').slice(-1)[0].split('.')[1]
+/**
+ * 获取文件扩展名
+ * @param file 获取文件扩展名
+ * @returns 文件扩展名
+ */
+export const getExtendName = (file: string) => getFileInfo(file)?.ext ?? ''
 
-export const renameFile = (file: string, name: string) => {
-  const _path = parsePath(file).slice(-1)[0]
-  const ext = getExtendName(file)
-  name = parsePath(name).slice(-1)[0]
-  const newFile = path.join(_path, [name, ext].join('.'))
-  if (fileExist(newFile)) {
-    return ''
-  }
-  writeFile(newFile, readFile(file))
-  return removeFiles(file)
+/**
+ * 移动源文件到指定位置 可用于重命名
+ * @param file 源文件路径
+ * @param position 移动位置
+ * @return 是否移动完毕
+ */
+export const moveFile = (file: string, position: string) => {
+  if (fileExist(file), !fileExist(position)) {
+    fs.renameSync(file, position)
+    return fileExist(position)
+  } else return false
 }

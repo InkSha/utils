@@ -1,13 +1,3 @@
-/**
- * @file Path module.
- * @description Some Path operations.
- * @license MIT
- * @author InkSha<git@inksha.com>
- * @created 2023-11-11
- * @updated 2023-11-12
- * @version 1.0.1
- */
-
 import path from 'node:path'
 
 /**
@@ -15,18 +5,19 @@ import path from 'node:path'
  * @param _path 路径
  * @returns 路径数组
  */
-export function parsePath (_path: string): string[] {
+export function parsePath (_path: string, keepRoot = true): string[] {
   const result: string[] = []
   if (_path) {
     const root = getRoot(_path)
+    _path = _path + root
     let tmpPath = path.parse(_path)
-    if (root) _path = _path.slice(1)
+    if (root && !keepRoot) _path = _path.slice(1)
     result.push(tmpPath.ext ? tmpPath.dir : _path)
     while (tmpPath.dir && tmpPath.root !== tmpPath.dir) {
       if (!tmpPath.ext) {
-        let items = `${tmpPath.dir}`
-        items = items.charAt(0) === root ? items : root + items
-        result.push(items)
+        let dir = tmpPath.dir + root
+        if (dir.charAt(0) && !keepRoot) dir = dir.slice(1)
+        result.push(dir)
       }
       tmpPath = path.parse(tmpPath.dir)
     }
