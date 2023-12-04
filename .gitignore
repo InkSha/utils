@@ -5,6 +5,7 @@ node_modules
 log
 /lib
 /docs
+/tmp
 
 # local env files
 .env.local

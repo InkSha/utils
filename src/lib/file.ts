@@ -3,7 +3,6 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { parsePath } from './path'
 import { FileObject } from './../types'
-import { asyncExec } from '@inksha/toolsets'
 
 /**
  * 创建文件夹
@@ -103,14 +102,85 @@ export const genFileObject = (
  * @param file 文件路径
  * @returns 获取的文件信息
  */
-export const getFileInfo = (file: string) => fileExist(file) ? { ...fs.statSync(file), ...path.parse(file) } : undefined
+export const getFileInfo = (file: string) => {
+  const status = fs.statSync(file)
+  const _path = path.parse(file)
+  return {
+    root: _path.root ?? '',
+    dir: _path.dir ?? '',
+    base: _path.base ?? '',
+    ext: _path.ext ?? '',
+    name: _path.name ?? '',
+    origin: _path.name + _path.ext,
+    dev: status.dev ?? 0,
+    mode: status.mode ?? 0,
+    nlink: status.nlink ?? 0,
+    uid: status.uid ?? 0,
+    gid: status.gid ?? 0,
+    rdev: status.rdev ?? 0,
+    blksize: status.blksize ?? 0,
+    ino: status.ino ?? 0,
+    size: status.size ?? 0,
+    blocks: status.blocks ?? 0,
+    atimeMs: status.atimeMs ?? +new Date(),
+    mtimeMs: status.mtimeMs ?? +new Date(),
+    ctimeMs: status.ctimeMs ?? +new Date(),
+    birthtimeMs: status.birthtimeMs ?? +new Date(),
+    atime: status.atime ?? new Date(),
+    mtime: status.mtime ?? new Date(),
+    ctime: status.ctime ?? new Date(),
+    birthtime: status.birthtime ?? new Date()
+  }
+}
 
 /**
  * 判断是否是文件
  * @param path 文件路径
  * @returns 是否是文件
  */
-export const isFile = (path: string) => getFileInfo(path)?.isFile()
+export const isFile = (file: string) => fs.statSync(file).isFile()
+
+/**
+ * 判断是否是块设备
+ * @param file 文件路径
+ * @returns 是否块设备
+ */
+export const isBlockDevice = (file: string) => fs.statSync(file).isBlockDevice()
+
+/**
+ * 判断是否是字符设备
+ * @param file 文件路径
+ * @returns 是否是字符设备
+ */
+export const isCharacterDevice = (file: string) => fs.statSync(file).isCharacterDevice()
+
+/**
+ * 判断是否是目录
+ * @param file 文件路径
+ * @returns 是否是目录
+ */
+export const isDirectory = (file: string) => fs.statSync(file).isDirectory()
+
+/**
+ * 判断是否是管道设备
+ * @param file 文件路径
+ * @returns 是否是管道设备
+ */
+export const isFIFO = (file: string) => fs.statSync(file).isFIFO()
+
+/**
+ * 判断是否是套接字
+ * @param file 文件路径
+ * @returns 是否是套接字
+ */
+export const isSocket = (file: string) => fs.statSync(file).isSocket()
+
+/**
+ * 判断是否是符号链接
+ * @param file 文件路径
+ * @returns 是否是符号链接
+ */
+export const isSymbolicLink = (file: string) => fs.statSync(file).isSymbolicLink()
 
 /**
  * 搜索文件
@@ -130,7 +200,7 @@ export const searchPath = (
     if (dirent.match(keyword)) {
       const filePath = path.join(basePath, dirent)
       const extname = dirent.split('.').slice(-1)[0]
-      const isDir = !isFile(filePath)
+      const isDir = !(isFile(filePath))
       const obj = genFileObject(dirent, filePath, extname, isDir)
       result.push(obj)
       if (isDir) searchPath(filePath, keyword, hasChild, result)
@@ -138,58 +208,6 @@ export const searchPath = (
   }
   return result
 }
-
-/**
- * 异步创建流
- * @param filepath 文件路径
- * @returns 包含创建文件流的 Promise
- */
-export const createSteamSync = (filepath: string) =>
-  asyncExec(() => createStream(filepath))
-
-/**
- * 异步创建文件夹
- * @param dir 文件夹名称
- * @returns 包含文件夹是否存在的 Promise
- */
-export const mkdirAsync = (dir: string) => asyncExec(() => mkdir(dir))
-
-/**
- * 异步读取文件
- * @param filePath 文件路径
- * @returns 包含文件内容的 Promise
- */
-export const readFileAsync = (filePath: string) =>
-  asyncExec(() => readFile(filePath))
-
-/**
- * 异步写入文件
- * @param filePath 文件路径
- * @param data 写入数据
- * @param append 是否追加
- * @returns 包含文件是否存在的 Promise
- */
-export const writeFileAsync = (
-  filePath: string,
-  data: string | NodeJS.ArrayBufferView,
-  append = true,
-) => asyncExec(() => writeFile(filePath, data, append))
-
-/**
- * 异步的判断文件是否存在
- * @param filePath 文件路径
- * @returns 包含文件是否存在的 Promise
- */
-export const fileExistAsync = (filePath: string) =>
-  asyncExec(() => fileExist(filePath))
-
-/**
- * 异步删除文件
- * @param filePath 文件路径
- * @returns 包含文件是否存在的 Promise
- */
-export const removeFilesAsync = (filePath: string) =>
-  asyncExec(() => removeFiles(filePath))
 
 /**
  * 计算 hash
@@ -236,9 +254,17 @@ export const getExtendName = (file: string) => getFileInfo(file)?.ext ?? ''
  * @param position 移动位置
  * @return 是否移动完毕
  */
-export const moveFile = (file: string, position: string) => {
-  if (fileExist(file), !fileExist(position)) {
-    fs.renameSync(file, position)
-    return fileExist(position)
+export const moveFile = (file: string, position: string, copy = false) => {
+  if (fileExist(file)) {
+    if (isDirectory(position)) {
+      position = path.join(position, getFileInfo(file).origin)
+    }
+    if (!fileExist(position)) {
+      fs.renameSync(file, position)
+      if (copy) {
+        writeFile(file, readFile(position))
+      }
+      return fileExist(position)
+    }
   } else return false
 }

@@ -1,13 +1,21 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { generatorRandom } from '@inksha/toolsets'
-import { mkdir, readFile, writeFile, removeFiles, searchPath, isFile, computedFileHash, fileExist, getFileInfo } from './../../src/lib/file'
+import * as fileModule from './../../src/lib/file'
+import { parsePath } from '../../src/lib/path'
+import path from 'node:path'
 
 describe('test file module', () => {
   const baseDir = './tmp_test'
   const content = 'awdadawdawdadawdaw'
   const fileList: string[] = []
   const max = Math.max(generatorRandom(), 20)
+  const toPosition = './tmp_test/tmp'
+  const {
+    mkdir, readFile, writeFile, removeFiles,
+    searchPath, isFile, computedFileHash, fileExist,
+    getFileInfo, moveFile
+  } = fileModule
 
   beforeAll(() => {
     for (let i = 0; i < max; i++) {
@@ -21,6 +29,7 @@ describe('test file module', () => {
 
   test('test mkdir', () => {
     expect(mkdir(baseDir)).toBe(true)
+    expect(mkdir(toPosition)).toBe(true)
   })
 
   test('test write and read file', () => {
@@ -63,10 +72,20 @@ describe('test file module', () => {
     expect(getFileInfo(name)).not.toBeUndefined()
   })
 
-  test('test get file info fail', () => {
+  test('test copy file', () => {
     const name = fileList[generatorRandom(0, fileList.length - 1)]
-    expect(removeFiles(name)).toBe(false)
-    expect(getFileInfo(name)).toBeUndefined()
+    const file = path.join(parsePath(toPosition)[0], getFileInfo(name).origin)
+    expect(fileExist(file)).toBe(false)
+    expect(moveFile(name, toPosition, true)).toBe(true)
+    expect(fileExist(name)).toBe(true)
+  })
+
+  test('test move file', () => {
+    const name = fileList[generatorRandom(0, fileList.length - 1)]
+    const file = path.join(parsePath(toPosition)[0], getFileInfo(name).origin)
+    expect(fileExist(file)).toBe(false)
+    expect(moveFile(name, toPosition)).toBe(true)
+    expect(fileExist(name)).toBe(false)
   })
 
   test('test remove dir', () => {
