@@ -252,19 +252,34 @@ export const getExtendName = (file: string) => getFileInfo(file)?.ext ?? ''
  * 移动源文件到指定位置 可用于重命名
  * @param file 源文件路径
  * @param position 移动位置
- * @param copy 是否是复制
  * @return 是否移动完毕
  */
-export const moveFile = (file: string, position: string, copy = false) => {
+export const moveFile = (file: string, position: string) => {
   if (fileExist(file)) {
     if (fileExist(position) && isDirectory(position)) {
       position = path.join(position, getFileInfo(file).origin)
     }
     if (!fileExist(position)) {
       fs.renameSync(file, position)
-      if (copy) {
-        writeFile(file, readFile(position))
-      }
+      return fileExist(position)
+    }
+  }
+  return false
+}
+
+/**
+ * 复制源文件导指定位置
+ * @param file 源文件路径
+ * @param position 复制位置
+ * @returns 是否复制完毕
+ */
+export const copyFile = (file: string, position: string) => {
+  if (fileExist(file)) {
+    if (fileExist(position) && isDirectory(position)) {
+      position = path.join(position, getFileInfo(file).origin)
+    }
+    if (!fileExist(position)) {
+      fs.copyFileSync(file, position)
       return fileExist(position)
     }
   }
