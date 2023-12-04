@@ -28,8 +28,8 @@ export const readFile = (filePath: string, binary = false): string => {
   return fileExist(filePath)
     ? filePath
       ? fs.readFileSync(filePath, {
-        encoding: binary ? 'binary' : 'utf8',
-      })
+          encoding: binary ? 'binary' : 'utf8',
+        })
       : ''
     : ''
 }
@@ -129,7 +129,7 @@ export const getFileInfo = (file: string) => {
     atime: status.atime ?? new Date(),
     mtime: status.mtime ?? new Date(),
     ctime: status.ctime ?? new Date(),
-    birthtime: status.birthtime ?? new Date()
+    birthtime: status.birthtime ?? new Date(),
   }
 }
 
@@ -152,7 +152,8 @@ export const isBlockDevice = (file: string) => fs.statSync(file).isBlockDevice()
  * @param file 文件路径
  * @returns 是否是字符设备
  */
-export const isCharacterDevice = (file: string) => fs.statSync(file).isCharacterDevice()
+export const isCharacterDevice = (file: string) =>
+  fs.statSync(file).isCharacterDevice()
 
 /**
  * 判断是否是目录
@@ -180,7 +181,8 @@ export const isSocket = (file: string) => fs.statSync(file).isSocket()
  * @param file 文件路径
  * @returns 是否是符号链接
  */
-export const isSymbolicLink = (file: string) => fs.statSync(file).isSymbolicLink()
+export const isSymbolicLink = (file: string) =>
+  fs.statSync(file).isSymbolicLink()
 
 /**
  * 搜索文件
@@ -200,7 +202,7 @@ export const searchPath = (
     if (dirent.match(keyword)) {
       const filePath = path.join(basePath, dirent)
       const extname = dirent.split('.').slice(-1)[0]
-      const isDir = !(isFile(filePath))
+      const isDir = !isFile(filePath)
       const obj = genFileObject(dirent, filePath, extname, isDir)
       result.push(obj)
       if (isDir) searchPath(filePath, keyword, hasChild, result)
@@ -215,11 +217,8 @@ export const searchPath = (
  * @param hash hash 格式
  * @returns 文件 hash
  */
-export const computedHash = (buffer: Buffer, hash?: string): string =>
-  crypto
-    .createHash(hash ?? 'md5')
-    .update(buffer)
-    .digest('hex')
+export const computedHash = (buffer: Buffer, hash = 'md5'): string =>
+  crypto.createHash(hash).update(buffer).digest('hex')
 
 /**
  * 计算文件hash
@@ -239,7 +238,8 @@ export const computedFileHash = (file: string): string => {
  * @param file 文件路径
  * @returns 文件大小
  */
-export const getFileSize = (file: string): number => getFileInfo(file)?.size ?? 0
+export const getFileSize = (file: string): number =>
+  getFileInfo(file)?.size ?? 0
 
 /**
  * 获取文件扩展名
@@ -252,11 +252,12 @@ export const getExtendName = (file: string) => getFileInfo(file)?.ext ?? ''
  * 移动源文件到指定位置 可用于重命名
  * @param file 源文件路径
  * @param position 移动位置
+ * @param copy 是否是复制
  * @return 是否移动完毕
  */
 export const moveFile = (file: string, position: string, copy = false) => {
   if (fileExist(file)) {
-    if (isDirectory(position)) {
+    if (fileExist(position) && isDirectory(position)) {
       position = path.join(position, getFileInfo(file).origin)
     }
     if (!fileExist(position)) {
@@ -266,5 +267,6 @@ export const moveFile = (file: string, position: string, copy = false) => {
       }
       return fileExist(position)
     }
-  } else return false
+  }
+  return false
 }
