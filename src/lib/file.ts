@@ -285,3 +285,18 @@ export const copyFile = (file: string, position: string) => {
   }
   return false
 }
+
+/**
+ * 删除文件夹
+ * @param base 文件夹路径
+ */
+export const rmdir = (base: string) => {
+  for (const f of fs.readdirSync(base)) {
+    const _path = path.join(base, f)
+    if (fs.statSync(_path).isFile()) removeFiles(_path)
+    else {
+      rmdir(_path)
+      removeFiles(_path)
+    }
+  }
+}
