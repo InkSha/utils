@@ -28,8 +28,8 @@ export const readFile = (filePath: string, binary = false): string => {
   return fileExist(filePath)
     ? filePath
       ? fs.readFileSync(filePath, {
-          encoding: binary ? 'binary' : 'utf8',
-        })
+        encoding: binary ? 'binary' : 'utf8',
+      })
       : ''
     : ''
 }
@@ -300,3 +300,10 @@ export const rmdir = (base: string) => {
     }
   }
 }
+
+/**
+ * 读取文件夹
+ * @param base 文件夹路径
+ * @returns 文件夹子项列表
+ */
+export const readDir = (base: string) => fs.readdirSync(base)
