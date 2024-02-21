@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { parsePath } from './path'
-import { FileObject } from './../types'
+import { requestFileOptions, FileObject } from '../types'
 
 /**
  * 创建文件夹
@@ -28,8 +28,8 @@ export const readFile = (filePath: string, binary = false): string => {
   return fileExist(filePath)
     ? filePath
       ? fs.readFileSync(filePath, {
-        encoding: binary ? 'binary' : 'utf8',
-      })
+          encoding: binary ? 'binary' : 'utf8',
+        })
       : ''
     : ''
 }
@@ -307,3 +307,52 @@ export const rmdir = (base: string) => {
  * @returns 文件夹子项列表
  */
 export const readDir = (base: string) => fs.readdirSync(base)
+
+/**
+ * 获取并保存文件
+ * @param options 获取文件选项
+ */
+export const requestFiles = (options: Partial<requestFileOptions>) => {
+  options = {
+    files: [],
+    dir: [],
+    ext: '.png',
+    method: 'GET',
+    rename: (name) => name,
+    ...options,
+  } as requestFileOptions
+
+  const { dir, files, ext, method, rename } = options as requestFileOptions
+
+  if (!fileExist(dir)) mkdir(dir)
+
+  for (const file of files) {
+    const match = decodeURI(file).match(/[///](.*)\./) ?? []
+    let fileName = 'new File'
+    if (match?.length >= 2) fileName = match[1]
+    const name = rename(fileName.split(/[/\\]/).pop() ?? fileName)
+
+    const getPath = () => {
+      let path = `./${dir}/${name}${ext}`
+      let index = 1
+      while (fileExist(path)) {
+        path = `./${dir}/${name}(${index++})${ext}`
+      }
+      return path
+    }
+
+    fetch(file, {
+      method,
+      headers: { 'Content-Type': 'application/octet-stream' },
+    })
+      .then((res) => res.blob())
+      .then((blob) => blob.arrayBuffer())
+      .then((arrayBuffer) => Buffer.from(arrayBuffer))
+      .then((data) => {
+        writeFile(getPath(), data, false)
+      })
+      .catch((error: Error) => {
+        console.error(new Error(error?.message).stack)
+      })
+  }
+}
